@@ -1,0 +1,24 @@
+Package: RClonOr
+Title: ClonalOrigin in R.
+Version: 0.0.0.9001
+Authors@R: 
+    person(given = "Richard",
+           family = "Everitt",
+           role = c("aut", "cre"),
+           email = "richard.g.everitt@gmail.com",
+           comment = c(ORCID = "0000-0002-0822-5648"))
+Description: A version of https://github.com/fmedina7/ClonOr_cpp that is callable from R.
+License: BSD_2_clause
+Encoding: UTF-8
+LazyData: true
+SystemRequirements: C++11, GNU make
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+URL: https://github.com/maugu/RClonOr
+BugReports: https://github.com/maugu/RClonOr/issues
+LinkingTo: Rcpp
+Imports:
+Suggests: knitr, rmarkdown, testthat
+VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)
