@@ -2,6 +2,9 @@
 #include "config.h"
 #endif
 
+#include <Rcpp.h>
+using namespace Rcpp;
+
 #include <getopt.h>
 #include "rectree.h"
 #include "param.h"
@@ -115,8 +118,24 @@ static const char * help=
     -V          	Print Version info\n\
     ";
 
-int main(int argc, char *argv[])
+//’ Run Clonal Origin.
+//’
+//’ @param argv_list input list of string arguments
+//’ @return Output written to file.
+// [[Rcpp::export]]
+int run_clonal_origin(List argv_list)
 {
+    int argc = argv_list.length();
+  
+    //std::string argv_string = as<string>(argv_sexp);
+    char **argv = new char*[argc];
+    for(int c1=0;c1< argc;c1++)
+    {
+      std::string current_argv_string = as<string>(argv_list[c1]);
+      argv[c1] = new char[current_argv_string.length()];
+      strcpy(argv[c1], current_argv_string.c_str());
+    }
+  
     cout<<"Hi!"<<endl;
     
     string comment="Command line: ";

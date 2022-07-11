@@ -1,4 +1,3 @@
 PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS)
 PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
-PKG_LIBS = $(SHLIB_OPENMP_CFLAGS)
-PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` `gsl-config --libs`
+PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) -L$(LIB_GSL)/lib -lgsl -lgslcblas
