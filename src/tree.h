@@ -3,6 +3,7 @@
 #include "node.h"
 #include <string>
 #include <vector>
+#include <RcppGSL.h>
 #include <gsl/gsl_rng.h>
 #include "data.h"
 
