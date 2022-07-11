@@ -7,9 +7,13 @@
 //
 
 #include "moveaddedgeMAIS.h"
-#include <omp.h>
 #include <algorithm>
 #include "moveWithinAIS.h"
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 //
 using namespace std;
 namespace weakarg
@@ -114,6 +118,7 @@ namespace weakarg
  
         MoveWithinAIS moveAIS(T, param->getgamma_AIS());
         
+        #ifdef _OPENMP
         #pragma omp parallel for
         for(int n=0; n<N; n++){
             
@@ -170,6 +175,64 @@ namespace weakarg
                 
             }
         }
+        #endif
+        
+        #ifndef _OPENMP
+        for(int n=0; n<N; n++){
+          
+          int t=0;
+          
+          //Draw start and end
+          param->getRectreeAux_vec()[n]->rectree0->setBlock(&start[n],&end[n],param->getDelta(),param->getData()->getBlocks());
+          
+          //Draw eto and tto
+          eto[n]=param->getRectreeAux_vec()[n]->rectree0->getPoint(&tto[n]);
+          
+          //Draw efrom and tfrom
+          tfrom[n]=tto[n]+param->getRectreeAux_vec()[n]->rectree0->getNode(eto[n])->getAge();
+          efrom[n]=param->getRectreeAux_vec()[n]->rectree0->getEdgeCoal(&tfrom[n]);
+          tfrom[n]-=param->getRectreeAux_vec()[n]->rectree0->getNode(efrom[n])->getAge();
+          
+          param->getRectreeAux_vec()[n]->setAll(start[n],end[n],tfrom[n],tto[n],efrom[n],eto[n]);
+          
+          double ll_partial=param->getRectreeAux_vec()[n]->computePartialLL(param->getTheta());
+          double ll0_partial=0;
+          for (unsigned int i=start[n];i<end[n];i++)
+            ll0_partial+=param->getLLsite(i);
+          store_ll[n]=param->getRectreeAux_vec()[n]->store_ll;
+          
+          ll[n]=l0-ll0_partial+ll_partial;
+          
+          while(t<T){
+            
+            if(t==0)
+              lratio[n]=-l0+log(param->getRho()*rectree0->getTTotal()/2.0/(rectree0->numRecEdge()+1));
+            
+            lratio[n]+=(moveAIS.gammaAIS(t+1)-moveAIS.gammaAIS(t))*ll[n];
+            
+            if(t!=T-1){
+              
+              int accep=moveAIS.moveFwd(t+1, param, param->getRectreeAux_vec()[n], &ll[n]);
+              
+              if(accep!=0){
+                
+                store_ll[n]=param->getRectreeAux_vec()[n]->store_ll;
+                //ll[n]=ll_Temp;
+                
+                tfrom[n]=param->getRectreeAux_vec()[n]->tfrom;
+                tto[n]=param->getRectreeAux_vec()[n]->tto;
+                start[n]=param->getRectreeAux_vec()[n]->start;
+                end[n]=param->getRectreeAux_vec()[n]->end;
+                efrom[n]=param->getRectreeAux_vec()[n]->efrom;
+                eto[n]=param->getRectreeAux_vec()[n]->eto;
+                
+              }
+            }
+            t++;
+            
+          }
+        }
+        #endif
         
         if(logSumExp(lerror)!=log(N))
             return -1;

@@ -18,7 +18,10 @@
 #include "moveregraftclonal.h"
 #include "movegreedytree.h"
 #include "moveWithinAIS.h"
+
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 
 //#define DEBUG
@@ -121,6 +124,7 @@ void Param::readProgramOptions()
         mall.push_back(new MoveRemEdgeMAIS(this,opt().movep[3]));
         mall.push_back(new MoveAddEdgeMAIS(this,opt().movep[4]));
         
+        #ifdef _OPENMP
         int nProcessors=omp_get_max_threads();
         int nThreads=nProcessors;
         if(nProcessors>this->getN_MAIS())
@@ -135,6 +139,16 @@ void Param::readProgramOptions()
             
             this->rectreeAux_vec.push_back(new RecTreeAux(this->data,this->rectree));
         }
+        #endif
+        
+        #ifndef _OPENMP
+        int N=this->getN_MAIS();
+        
+        for(int i=0; i<N; i++){
+          
+          this->rectreeAux_vec.push_back(new RecTreeAux(this->data,this->rectree));
+        }
+        #endif
         
     }
     mall.push_back(new MoveSiteChange(this,opt().movep[5]));
