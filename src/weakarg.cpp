@@ -2,6 +2,7 @@
 #include "config.h"
 #endif
 
+#include <RcppGSL.h>
 #include <Rcpp.h>
 using namespace Rcpp;
 

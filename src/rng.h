@@ -1,6 +1,7 @@
 #ifndef __RNG_H__
 #define __RNG_H__
 
+#include <RcppGSL.h>
 #include <gsl/gsl_rng.h>
 #include <ctime>
 #include<iostream>

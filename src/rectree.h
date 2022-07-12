@@ -6,6 +6,7 @@
 #include "mpiutils.h"
 #include "wargxml.h"
 
+#include <RcppGSL.h>
 #include <gsl/gsl_randist.h>
 #define MAXNODES 100000
 

@@ -3,6 +3,7 @@
 #include <cmath>
 #include "param.h"
 #include "mpiutils.h"
+#include <RcppGSL.h>
 #include <gsl/gsl_rng.h>
 
 namespace weakarg
