@@ -39,8 +39,8 @@ vignettes/*.pdf
 .Renviron
 
 .DS_Store
-.o
-.so
+src/.o
+src/.so
 
 src/Makevars
 
