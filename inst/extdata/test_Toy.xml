@@ -1,0 +1,10 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<outputFile>
+<Blocks>
+0,10000
+</Blocks>
+<comment>Command line: -a 1,1,1,2,2,1,1,1,0,0,0 -x 0 -y 500000 -z 10 -D50 -T 10 -R 5 -m 0.25,100,1 /Users/richard/Dropbox/projects/RClonOr/inst/extdata/true_tree_Toy.nwk /Users/richard/Dropbox/projects/RClonOr/inst/extdata/simulatedData_Toy.xmfa /Users/richard/Dropbox/projects/RClonOr/inst/extdata/test_Toy.xml 
+Version: warg build date Jul 13 2022 at 21:29:13
+Seed: 18238678194553587844</comment>
+<nameMap>0,0;1,1;2,2;3,3;4,4;5,5;6,6;7,7;8,8;9,9;</nameMap>
+<regions>0</regions>

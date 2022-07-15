@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 using namespace std;
+
+#include <Rcpp.h>
+using namespace Rcpp;
 namespace weakarg
 {
 
@@ -26,10 +29,12 @@ Data::Data(string filename)
 {
     string line;
     ifstream file;
+    Rcout<<filename<<endl;
     file.open(filename.data());//Open file
     unsigned int which=-1;
     while (1)
     {
+      //Rcout<<filename<<endl;
         getline(file,line);//Read next line from file
         if (file.eof())
             break;//Stop if end of file
