@@ -127,26 +127,29 @@ static const char * help=
 // [[Rcpp::export]]
 int run_clonal_origin(List argv_list)
 {
-  int argc = argv_list.length();
+  int argc = argv_list.length()+1;
   
   //std::string argv_string = as<string>(argv_sexp);
   char **argv = new char*[argc];
-  for(int c1=0;c1< argc;c1++)
+  std::string current_argv_string = "warg";
+  argv[0] = new char[current_argv_string.length()];
+  strcpy(argv[0], current_argv_string.c_str());
+  for(int c1=0;c1< argc-1;c1++)
   {
     std::string current_argv_string = as<string>(argv_list[c1]);
-    argv[c1] = new char[current_argv_string.length()];
-    strcpy(argv[c1], current_argv_string.c_str());
+    argv[c1+1] = new char[current_argv_string.length()];
+    strcpy(argv[c1+1], current_argv_string.c_str());
   }
-  
-  cout<<"Hi!"<<endl;
   
   string comment="Command line: ";
   for(int c1=0;c1< argc;c1++) {comment.append(argv[c1]);comment.append(" ");}
   comment.append("\nVersion: ");
   comment.append(getVersion());
+  
   vector<string> inputfiles;
   initmpi(argc,argv);
   makerng(true);
+  
   //optind=0;
   bool upgma=false;
   int c;
@@ -162,13 +165,16 @@ int run_clonal_origin(List argv_list)
   bool readparams=false;
   bool setregions=false;
   int lastIterNum=-1;
+  
+  //throw runtime_error("stop");
+  
   while ((c = getopt (argc, argv, "w:x:y:z:s:va:T:R:D:L:C:m:r:t:i:S:G:fUhV")) != -1)
     switch (c)
     {
     case('w'):if(atoi(optarg)>=0)opt().preburnin=atoi(optarg);break;
     case('x'):if(atoi(optarg)>=0)opt().burnin=atoi(optarg);break;
     case('y'):if(atoi(optarg)>=0)opt().additional=atoi(optarg);break;
-    case('z'):if(atoi(optarg)> 0)opt().thinin=atoi(optarg);break;
+    case('z'):if(atoi(optarg)> 0)opt().thinin=atoi(optarg); break;
     case('T'):opt().theta=atof(optarg);if (optarg[0]=='s') {opt().theta=atof(optarg+1);opt().thetaPerSite=true;};break;
     case('R'):opt().rho=atof(optarg);if (optarg[0]=='s') {opt().rho=atof(optarg+1);opt().rhoPerSite=true;};break;
     case('D'):opt().delta=atof(optarg);break;
@@ -293,20 +299,14 @@ int run_clonal_origin(List argv_list)
     p.setRho(0);
   }else{//Load tree and data from files
     string datafile=string(argv[optind++]);
-    Rcout<<"1"<<endl;
     
     try{
-      Rcout<<"2"<<endl;
       readparams=initializeTree(data,rectree,inputfiles,datafile,&lastIterNum);// initialises data and rectree! (passed by reference)
-      Rcout<<"3"<<endl;
-    }catch(char *x){Rcout<<"4"<<endl;
+      
+    }catch(char *x){
       cout<<x<<endl;}
-    Rcout<<"5"<<endl;
     if(data==NULL) {cerr<<"Error: No Data initialised.  Was there a problem with the input file?"<<endl; exit(0);}
     if(rectree==NULL) {cerr<<"Error: No Rectree initialised.  Was there a problem with the input file?"<<endl; exit(0);}
-    Rcout<<comment<<endl;
-    Rcout<<datafile<<endl;
-    Rcout<<optind<<endl;
     dlog(1)<<"Initiating parameter..."<<endl;
     p=Param(rectree,data);
     p.setRho(0);
@@ -315,32 +315,25 @@ int run_clonal_origin(List argv_list)
       WargXml infile(inputfiles[0]);
       p.readParamsFromFile(&infile);
     }
-    Rcout<<comment<<endl;
-    Rcout<<datafile<<endl;
-    Rcout<<optind<<endl;
   }
   opt().outfile = argv[optind++];
   
   if(opt().preburnin>0 && (opt().movep[8]>0 || opt().movep[10]>0) && lastIterNum==-1) {
     cout<<"Starting Pre-burnin Metropolis-Hastings algorithm.."<<endl;
-    Rcout<<"200"<<endl;
     double rho=opt().rho;
     opt().rho=0;
     long int burnin= opt().burnin, additional=opt().additional,temperreps=opt().temperreps;
     opt().burnin=opt().preburnin;
     opt().additional=0;
-    Rcout<<"201"<<endl;
     p.readProgramOptions();
     p.metropolis(comment);
     opt().burnin=burnin;
     opt().additional=additional;
     opt().rho=rho;
     opt().temperreps=temperreps;
-    Rcout<<"202"<<endl;
     p.readProgramOptions();
   }else if(!readparams) p.readProgramOptions();
   
-  Rcout<<"203"<<endl;
   ///FMA_CHANGES: For including specifications to filename
   std::string extendedFilename=opt().outfile;
   extendedFilename=extendedFilename.substr(0,opt().outfile.length()-4);
@@ -418,58 +411,42 @@ RecTree * makeGreedyTree(Data * data,WargXml * infile,vector< vector<double> >  
 
 vector<double> readInputFiles(Data* &data, RecTree* &rectree,vector<double> &sumdists,vector<int> &keepregions,vector<int> &previousL,vector<string> inputfiles,string datafile,int greedystage, int* lastIterNum)
 {
-  Rcout<<"10"<<endl;
   bool setregions=false;
   if(opt().subset.size()>0 || opt().subsetSeed !=-1) setregions=true;
-  Rcout<<"11"<<endl;
   vector <vector<double> >sumdetails;
   vector<double>pars(3,0.0); // parameters
   int counts=0;// counts for the parameters
-  Rcout<<"12"<<endl;
   
   dlog(1)<<"Loading data: "<<datafile<<endl;
   for(unsigned int c1=0;c1<inputfiles.size();c1++) {
-    Rcout<<"13"<<endl;
     if(data!=NULL){ delete(data);}
-    Rcout<<"13.1"<<endl;
     data=new Data(datafile); // we have to keep reloading the data
-    Rcout<<"13.2"<<endl;
     dlog(1)<<"Loading tree "<<c1<<"... "<<inputfiles[c1]<<endl;
-    Rcout<<"13.3"<<endl;
     string treefile=inputfiles[c1];
-    Rcout<<"13.4"<<endl;
     WargXml infile(treefile);
-    Rcout<<"14"<<endl;
     if(infile.isempty()) {cerr<<"Warning: file "<<treefile<<" is empty. Skipping."<<endl;continue;}
     if(infile.gotoLineContaining("<Iteration>",true)<0) {// is a newick file
-      Rcout<<"15"<<endl;
       if(inputfiles.size()>1) {cerr<<"Warning: multiple newick files given.  Only the final one will be used"<<endl;}
       data->subset(opt().subset,opt().subsetSeed);// apply the subset as provided on the command line
       rectree=new RecTree(data->getL(),treefile);
     }else{// is an xml output file
-      Rcout<<"16"<<endl;
       if(opt().subset.size()>0) data->subset(opt().subset,opt().subsetSeed);
       else data->readRegionsFromFile(&infile);
       if(greedystage!=2){ // second pass
         previousL.push_back(previousL.back()+data->getL());
         for(unsigned int c2=0;c2<data->getRegions()->size();c2++) 	keepregions.push_back(data->getRegions()->at(c2));
       }
-      Rcout<<"17"<<endl;
       if(greedystage==0) {// not greedy
-        Rcout<<"18"<<endl;
         if(rectree!=NULL) delete(rectree);
         rectree=new RecTree(data->getL(),&infile);
       }else if(greedystage==1){// get the dists for a greedy tree
-        Rcout<<"19"<<endl;
         if(rectree!=NULL) delete(rectree);
         rectree=makeGreedyTree(data,&infile,&sumdetails,&counts,&pars,&sumdists);
       }else if(greedystage==2){// construct a final iteration from all input files
-        Rcout<<"20"<<endl;
         if(rectree!=NULL && c1==0) delete(rectree);
         if(c1==0) rectree=new RecTree(previousL.back(),&infile,false);
         rectree->addEdgesFromFile(&infile,previousL[c1]);
       }
-      Rcout<<"21"<<endl;
       //FMA_CHANGES: find last iteration number
       int temp=atoi(infile.getParam("number",infile.gotoLineContaining("<number>",true)).c_str());
       *lastIterNum=temp;
@@ -487,31 +464,22 @@ bool initializeTree(Data* &data, RecTree* &rectree,vector<string> inputfiles,str
   vector<int> previousL(1,0);// List of partial L's; starts with just 0
   bool  readparams=false;
   
-  Rcout<<"1"<<endl;
-  
   if(opt().greedyWeight<0) {// create a greedy tree from the input
     pars=readInputFiles(data,rectree,sumdists,keepregions,previousL,inputfiles,datafile,1);
     readInputFiles(data,rectree,sumdists,keepregions,previousL,inputfiles,datafile,2);
   }else{// just read in the input and keep the specified regions
-    Rcout<<"1.2"<<endl;
     if(inputfiles.size()>1) cerr<<"Warning: multiple input files specified but this is only purposeful with the -G -1 option. Ignoring all but the final one."<<endl;
-    Rcout<<"1.2.1"<<endl;
     pars=readInputFiles(data,rectree,sumdists,keepregions,previousL,inputfiles,datafile,0,lastIterNum);
-    Rcout<<"1.2.2"<<endl;
   }
-  Rcout<<"2"<<endl;
   for(unsigned int i=0;i<pars.size();i++) if(pars[i]!=0) readparams=true;
   
-  Rcout<<"3"<<endl;
   if(data!=NULL){ delete(data);}
   data=new Data(datafile); // we have to keep reloading the data
   data->subset(keepregions,-1);// apply the subset of all data we've seen
   
-  Rcout<<"4"<<endl;
   Param * p= new Param(rectree,data);
   if(readparams) p->setTheta(pars[2]);p->setRho(pars[0]);p->setDelta(pars[2]);
   
-  Rcout<<"5"<<endl;
   if(opt().greedyWeight<0) p->greedyApply(sumdists);
   delete(p);
   return(readparams);
