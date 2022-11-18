@@ -397,5 +397,7 @@ clonal_origin = function(tree_filename,
   argv_list[[length(argv_list)+1]] = data_filename
   argv_list[[length(argv_list)+1]] = output_filename
   
-  run_clonal_origin(argv_list)
+  test_input[[3]] = "-y 5000"
+  run_clonal_origin(test_input)
+  #run_clonal_origin(argv_list)
 }

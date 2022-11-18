@@ -146,6 +146,8 @@ int run_clonal_origin(List argv_list)
   comment.append("\nVersion: ");
   comment.append(getVersion());
   
+  //Rcout << comment << endl;
+  
   vector<string> inputfiles;
   initmpi(argc,argv);
   makerng(true);
@@ -243,6 +245,8 @@ int run_clonal_origin(List argv_list)
   if (argc-optind==3 || (opt().greedyWeight<0 && argc-optind>3)){
     while(argc-optind>2) inputfiles.push_back(string(argv[optind++]));
   }
+  
+  Rcout << argc-optind << endl;
   
   if (argc-optind!=1 && argc-optind!=2) {cout<<"Wrong number of arguments."<<endl<<help<<endl;return 1;}
   
