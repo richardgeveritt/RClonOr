@@ -146,7 +146,7 @@ int run_clonal_origin(List argv_list)
   comment.append("\nVersion: ");
   comment.append(getVersion());
   
-  //Rcout << comment << endl;
+  Rcout << comment << endl;
   
   vector<string> inputfiles;
   initmpi(argc,argv);
