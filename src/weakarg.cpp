@@ -151,8 +151,7 @@ int run_clonal_origin(List argv_list)
   vector<string> inputfiles;
   initmpi(argc,argv);
   makerng(true);
-  
-  //optind=0;
+  optind=1;
   bool upgma=false;
   int c;
   char * pch;
@@ -246,10 +245,8 @@ int run_clonal_origin(List argv_list)
     while(argc-optind>2) inputfiles.push_back(string(argv[optind++]));
   }
   
-  Rcout << argc-optind << endl;
-  
   if (argc-optind!=1 && argc-optind!=2) {cout<<"Wrong number of arguments."<<endl<<help<<endl;return 1;}
-  
+
   Param p;
   RecTree*rectree=NULL;
   Data*data=NULL;
