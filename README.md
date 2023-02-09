@@ -29,3 +29,5 @@ devtools::install_github("maugu/RClonOr")
 library(RClonOr)
 clonal_origin(system.file("extdata", "true_tree_Toy.nwk", package = "RClonOr"),system.file("extdata", "simulatedData_Toy.xmfa", package = "RClonOr"),"test_Toy.xml",a="1,1,1,2,2,1,1,1,0,0,0",x=0,y=5000,z=10,D=50,T=10,R=5,m="0.25,100,1")
 ```
+
+Sometimes the code crashes, requiring you to close the R session in process. If this happens, simply try running the same code again.
