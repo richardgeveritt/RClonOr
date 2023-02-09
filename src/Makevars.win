@@ -2,4 +2,4 @@ PKG_CPPFLAGS = -I$(SHLIB_OPENMP_CPPFLAGS) -I$(LIB_GSL)/include -I. -I../inst/inc
 PKG_CXXFLAGS = -I$(SHLIB_OPENMP_CXXFLAGS) -fopenmp
 PKG_CFLAGS = -I$(SHLIB_OPENMP_CFLAGS) -fopenmp
 ## Use the R_HOME indirection to support installations of multiple R version
-PKG_LIBS = -L$(SHLIB_OPENMP_CFLAGS) -L$(LIB_GSL)/lib $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppGSL:::LdFlags()") -ldl -lgomp
+PKG_LIBS = -L$(SHLIB_OPENMP_CFLAGS) -L$(LIB_GSL)/lib $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppGSL:::LdFlags()")
