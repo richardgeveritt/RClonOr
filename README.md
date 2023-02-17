@@ -32,4 +32,4 @@ clonal_origin(system.file("extdata", "true_tree_Toy.nwk", package = "RClonOr"),s
 
 The arguments to the R function correspond to those used in the command line arguments in the C++ version of ClonalOrigin: the original version can be found [here](https://github.com/xavierdidelot/ClonalOrigin), with the version associated with the paper "Speeding up Inference of Homologous Recombination in Bacteria" being found [here](https://github.com/fjmedinaaguayo/ClonOr_cpp). This package provides an R interface to the latter version, with the intention of making the program more widely accessible.
 
-Sometimes the code crashes, requiring you to close the R session in the process. If this happens, simply try running the same code again.
+Sometimes the code crashes, requiring you to close the R session in the process. Apologies - this seems to be due to some issue with the R/C++ interface. If you encounter this problem, simply try running the same code again.
