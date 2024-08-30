@@ -20,7 +20,7 @@ sudo apt-get install libgsl-dev
 3. Install the package in R using
 
 ```R
-devtools::install_github("maugu/RClonOr")
+devtools::install_github("richardgeveritt/RClonOr")
 ```
 
 4. Test that the package is installed by running a short MCMC chain using
