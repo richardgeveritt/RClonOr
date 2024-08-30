@@ -42,8 +42,6 @@ vignettes/*.pdf
 src/.o
 src/.so
 
-src/Makevars
-
 autom4te.cache
 config.log
 config.status
